@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {bindActionCreators} from 'redux';
 import Button from '@material-ui/core/Button';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControl from '@material-ui/core/FormControl';
@@ -6,6 +7,10 @@ import FormLabel from '@material-ui/core/FormLabel';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import { Route, Redirect } from 'react-router';
+import Items from '../components/Items/Items';
+import { connect } from 'react-redux'
+import * as LoginActions from '../action/login';
 import './Login.css';
 
 const styles = theme => ({
@@ -20,22 +25,31 @@ const styles = theme => ({
 class Login extends Component {
     state = {
         email: '',
-        password: ''
+        password: '',
+        redirect: false
     }
 
     handleSubmit = (event) => {
-        axios.post('http://localhost:3000/authenticate', {
+
+        // let _this = this;
+        // axios.post('http://localhost:3000/authenticate', {
+        //     email: this.state.email,
+        //     password: this.state.password
+        //   })
+        //   .then(function (response) {
+        //     console.log(response);
+        //     _this.setState({redirect: true})
+        //   })
+        //   .catch(function (error) {
+        //     console.log(error);
+        // });
+        // event.preventDefault();
+        event.preventDefault();
+        this.props.loginRequest({
             email: this.state.email,
             password: this.state.password
-          })
-          .then(function (response) {
-            // redirect according to status code
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log(error);
-        });
-        event.preventDefault();
+        })
+        
     }
 
     handleChange = (event) => {
@@ -49,28 +63,44 @@ class Login extends Component {
     }
 
     render () {
-        return (
-            <div className="Login">
-                <form onSubmit={this.handleSubmit}>
-                    <FormGroup id="email" size="large">
-                        <FormLabel checked>Email</FormLabel>
-                        <input name='email' autoFocus type="email" value={this.state.email} onChange={this.handleChange}></input>
-                    </FormGroup>
-                    <FormGroup id="password" size="large">
-                        <FormLabel>Password</FormLabel>
-                        <input name='password' value={this.state.password} onChange={this.handleChange} type="password"></input>
-                    </FormGroup>
-                    <Button variant="raised" style={styles.button}
-                        disabled={!this.validateForm()}
-                        type="submit"
-                        onClick = {this.handleSubmit}
-                        >
-                        Login
-                    </Button>
-                </form>
-            </div>
-        );
+        let {awaitingTransition, redirect} = this.props;
+        if (redirect){
+            return <Redirect to="/items" />
+        }else{
+            return (
+                <div className="Login">
+                    <form >
+                        <FormGroup id="email" size="large">
+                            <FormLabel checked>Email</FormLabel>
+                            <input name='email' autoFocus type="email" value={this.state.email} onChange={this.handleChange}></input>
+                        </FormGroup>
+                        <FormGroup id="password" size="large">
+                            <FormLabel>Password</FormLabel>
+                            <input name='password' value={this.state.password} onChange={this.handleChange} type="password"></input>
+                        </FormGroup>
+                        <Button variant="raised" style={styles.button}
+                            disabled={!this.validateForm()}
+                            type="submit"
+                            onClick = {this.handleSubmit.bind(this)}
+                            >
+                          {awaitingTransition ? 'Loging...' : 'Login' }  
+                        </Button>
+                    </form>
+                </div>
+            );
+        }
     }
 }
 
-export default Login;
+const mapStateToProps = state =>{
+    return {
+        awaitingTransition: state.ui.login.awaitingTransition,
+        redirect: state.ui.login.redirect
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators(LoginActions, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

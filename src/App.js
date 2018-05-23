@@ -1,16 +1,21 @@
 import React, { Component } from 'react';
 import Login from "./containers/Login";
-import Items from '../src/screens/items/items'
-import Create from '../src/screens/items/create'
+import Items from '../src/components/Items/Items';
+import Create from '../src/components/Items/Create';
+import { Route, Redirect } from 'react-router';
+import { BrowserRouter, Link } from 'react-router-dom'
 import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <Login />
-      </div>
+      <BrowserRouter>
+        <div className="App">
+          <Login />
+          <Route path="/items" component={Items} />
+        </div>
+      </BrowserRouter>
     );
   }
 }
