@@ -11,7 +11,7 @@ class Items extends Component {
 
   componentDidMount(){
     console.log('Dis mout');
-    axios.get('http://localhost:3000/api/v1/items')
+    axios.get()
     .then(function (response) {
       console.log(response);
     })

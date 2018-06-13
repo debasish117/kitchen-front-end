@@ -9,6 +9,7 @@ const defaultHeaders = {
 var axios = axiosInstance.create({
   baseURL: API_ENDPOINT,
   timeout: 100000,
+  headers: {'Authorization': 'foobar'}
   // headers: {'Accept': 'application/json'}
 });
 

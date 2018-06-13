@@ -12,8 +12,8 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div className="App">
-          <Login />
-          <Route path="/items" component={Items} />
+          <Route exact path="/" component={Login}/>
+          <Route exact path="/items" component={Items} />
         </div>
       </BrowserRouter>
     );
